@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.CourseMapper">
+    <sql id="course_all">
+        c.id,c.course_name,c.course_info,c.author,c.cover_image_url,
+        c.create_date,c.click_number,c.status,c.recommendation_grade,
+        c.course_type_id,t.id 'type_id',t.type_name 'type_name',t.parent_id 'parent_Id',
+        t.status 'type_status'
+    </sql>
+    <resultMap id="course" type="com.itany.netClass.entity.Course">
+        <id property="id" column="id"></id>
+        <result property="courseName" column="course_name"></result>
+        <result property="courseInfo" column="course_info"></result>
+        <result property="author" column="author"></result>
+        <result property="coverImage" column="cover_image_url"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="clickNum" column="click_number"></result>
+        <result property="status" column="status"></result>
+        <result property="recommendation" column="recommendation_grade"></result>
+        <result property="courseTypeId" column="course_type_id"></result>
+        <association property="courseType" column="type_id" javaType="com.itany.netClass.entity.CourseType">
+            <id property="id" column="type_id"></id>
+            <result property="typeName" column="type_name"></result>
+            <result property="parentId" column="parent_Id"></result>
+            <result property="status" column="type_status"></result>
+        </association>
+    </resultMap>
+    <select id="findAll" resultMap="course">
+        select <include refid="course_all"></include>
+        from t_course c join t_course_type t
+        on c.course_type_id = t.id
+    </select>
+    <insert id="addCourse" parameterType="Course">
+        insert into t_course
+        (course_name,course_info,author,cover_image_url,
+        click_number,status,recommendation_grade,
+        course_type_id)
+        values (#{courseName},#{courseInfo},#{author},#{coverImage},#{clickNum},#{status},#{recommendation},#{courseTypeId})
+    </insert>
+    <select id="selectByName" parameterType="string" resultMap="course">
+        select <include refid="course_all"></include>
+        from t_course c join t_course_type t
+        on c.course_type_id = t.id
+        where c.course_name = #{course_name}
+    </select>
+
+    <select id="selectByData" parameterType="Course" resultMap="course">
+        select <include refid="course_all"></include>
+        from t_course c join t_course_type t
+        on c.course_type_id = t.id
+        <where>
+            <if test="author != null and author != ''">
+                and c.author = #{author}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and c.course_name = #{courseName}
+            </if>
+            <if test="status != null and status != '-1'">
+                and c.status = #{status,jdbcType=DECIMAL}
+            </if>
+            <if test="courseTypeId != null and courseTypeId != ''and courseTypeId != '-1'">
+                and c.course_type_id = #{courseTypeId}
+            </if>
+            <choose>
+                <when test="(startDate != null and startDate != '') and (endDate == null or endDate == '')">
+                    and date_format(c.create_date,'%Y-%m-%d') &gt;= date_format(#{startDate},'%Y-%m-%d')
+                </when>
+                <when test="(startDate == null or startDate == '') and (endDate != null and endDate != '')">
+                    and date_format(c.create_date,'%Y-%m-%d') &lt;= date_format(#{endDate},'%Y-%m-%d')
+                </when>
+                <when test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                    and date_format(c.create_date,'%Y-%m-%d')
+                    between date_format(#{startDate},'%Y-%m-%d')
+                    and date_format(#{endDate},'%Y-%m-%d')
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <update id="modifyStatusById" parameterType="Course">
+        update t_course
+        set
+        status = #{status}
+        where
+        id = #{id}
+    </update>
+    <update id="modifyById" parameterType="Course">
+        update t_course
+        <set>
+            <if test="courseName != null and courseName != ''">
+                course_name = #{courseName},
+            </if>
+            <if test="courseInfo != null and courseInfo != ''">
+                course_info = #{courseInfo},
+            </if>
+            <if test="author != null and author != ''">
+                author = #{author},
+            </if>
+            <if test="coverImage != null and coverImage != ''">
+                cover_image_url = #{coverImage},
+            </if>
+            <if test="recommendation != null and recommendation != ''">
+                recommendation_grade = #{recommendation},
+            </if>
+            <if test="courseTypeId != null and courseTypeId != '' and courseTypeId != -1">
+                course_type_id = #{courseTypeId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itany.netClass.dao.AdminMapper">
+	<resultMap id="adminMap" type="com.itany.netClass.entity.Admin">
+		<id column="id" property="id" />
+		<result column="login_name" property="loginname" />
+		<result column="nickname" property="nickname" />
+		<result column="header_image_url" property="headerimageurl" />
+		<result column="password" property="password" />
+		<result column="role" property="role" />
+		<result column="email" property="email" />
+		<result column="login_date" property="loginDate" />
+		<result column="create_date" property="createDate" />
+		<result column="status" property="status" />
+	</resultMap>
+
+	<!-- 管理员登录 -->
+	<select id="login" resultMap="adminMap">
+		select id , login_name , nickname ,
+		header_image_url,
+		password , role , email , login_date , create_date ,
+		status
+		from t_user
+		where login_name = #{0}
+		and password = #{1}
+	</select>
+	<!-- 查找所有用户 -->
+	<select id="findAll" resultMap="adminMap">
+		select id , login_name , nickname
+		, header_image_url,
+		password , role , email , login_date , create_date
+		, status
+		from t_user
+	</select>
+
+	<!-- 根据用户id查找用户 -->
+	<select id="selectById" resultMap="adminMap">
+		select id , login_name ,
+		nickname , header_image_url,
+		password , role , email , login_date ,
+		create_date , status
+		from t_user where id = #{0}
+	</select>
+
+	<!-- 修改用户状态 -->
+	<update id="modifyStatus">
+		update t_user set status=#{0} where id = #{1}
+	</update>
+	<!-- 修改用户信息 -->
+	<update id="modifyAdmin">
+		update t_user set nickname = #{0}, role = #{1} ,password = #{2} ,email =
+		#{3} where id = #{4}
+	</update>
+
+	<!-- 模糊查询用户 -->
+	<select id="doSerach" parameterType="com.itany.netClass.vo.AdminQuery"
+		resultMap="adminMap">
+		select id , login_name , nickname , header_image_url,
+		password , role ,
+		email , login_date , create_date , status
+		from t_user
+		<where>
+			<if test="loginname != null">
+				and login_name like concat(concat('%', #{loginname}),
+				'%')
+			</if>
+			<if test="nickname != null">
+				and nickname like concat(concat('%', #{nickname}), '%')
+			</if>
+			<if test="nickname != null">
+				and nickname like concat(concat('%', #{nickname}), '%')
+			</if>
+			<if test="role != null and role != '-1'">
+				and role = #{role}
+			</if>
+			<if test="createDate != null">
+				and login_date &gt;= #{createDate}
+			</if>
+			<if test="removeDate != null">
+				and login_date &lt;= #{removeDate}
+			</if>
+			<if test="startDate != null">
+				and create_date &lt;= #{startDate}
+			</if>
+			<if test="endDate != null">
+				and create_date &lt;= #{endDate}
+			</if>
+		</where>
+
+	</select>
+</mapper>

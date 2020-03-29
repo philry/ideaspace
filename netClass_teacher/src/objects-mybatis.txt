@@ -1,0 +1,7 @@
+transaction=com.itany.netClass.transaction.impl.MyBatisTransactionManager
+<<<<<<< .mine
+userMapper=com.itany.netClass.dao.UserMapper
+=======
+userMapper=com.itany.netClass.dao.UserMapper
+userService=com.itany.netClass.service.proxy.UserServiceProxy
+userServiceTarget=com.itany.netClass.service.impl.UserServiceImpl>>>>>>> .r231

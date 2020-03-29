@@ -1,0 +1,27 @@
+分组
+项目名             红色       svn账号       蓝色      svn账号        黄色        svn账号
+netClass_cool     赵行保     zhaoxingbao    陈晨      chenchen       张晓峰     zhanxiaofeng
+netClass_WLS       沈佳浩     shenjiahao    李智      lizhi          王硕济     wangshuoji
+netClass_jts_web   蒋帅       jiangshuai   邵晨成    shaochencheng    滕杨      tengyang
+
+
+netClass_ry         无         无          严键国     yjg            饶帆        raofan
+netClass_JGZ        蒋楠     jiangnan       周翔      zhouxiang      顾江        gujiang
+netClass_xw         无         无          谢潇　   　xiexiao　　　　王卓        wangzhuo
+
+netClass_hzl       胡鹏       hupeng       卢建宇     lujianyu       赵则旸      zhaozeyang
+
+netClass_teacher   测试1      ceshi1        测试2     ceshi2         测试3       ceshi3
+
+
+
+
+
+
+
+
+
+
+
+
+

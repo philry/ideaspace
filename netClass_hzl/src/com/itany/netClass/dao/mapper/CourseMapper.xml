@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.CourseMapper">
+    <resultMap id="BaseResultMap" type="Course">
+        <id property="id" column="c.id"/>
+        <result property="name" column="course_name"></result>
+        <result property="courseInfo" column="course_info"></result>
+        <result property="author" column="author"></result>
+        <result property="imageUrl" column="cover_image_url"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="clickNum" column="click_number"></result>
+        <result property="status" column="c.status"></result>
+        <result property="recommmendGreade" column="recommendation_grade"></result>
+        <association property="courseType" column="course_type_id" javaType="com.itany.netClass.entity.CourseType">
+            <id property="id" column="t.id"></id>
+            <result property="name" column="type_name"></result>
+            <result property="parentId" column="parent_id"></result>
+            <result property="status" column="t.status"></result>
+        </association>
+    </resultMap>
+
+    <insert id="insertCourse" parameterType="Course">
+        insert into t_course (course_name,course_info,author,cover_image_url,
+        create_date,click_number,status,recommendation_grade,course_type_id)
+        values(#{name},#{courseInfo},#{author},#{imageUrl},#{createDate},#{clickNum},#{status},
+        #{recommmendGreade},#{courseType.id})
+    </insert>
+
+    <select id="findAll" resultMap="BaseResultMap" >
+      select c.id "c.id", course_name,course_info,author,cover_image_url,
+        create_date,click_number,c.status "c.status",recommendation_grade,course_type_id,
+        t.id "t.id",type_name,parent_id,t.status "t.status"
+        from t_course c left join t_course_type t
+        on c.course_type_id = t.id
+    </select>
+
+    <update id="updateCourse" parameterType="Course">
+        update t_course set course_name=#{name},course_info=#{courseInfo},author=#{author},
+        cover_image_url=#{imageUrl},create_date=#{createDate},click_number=#{clickNum},
+        status=#{status},recommendation_grade=#{recommmendGreade},course_type_id=#{courseType.id}
+        where id=#{id}
+    </update>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        select c.id "c.id", course_name,course_info,author,cover_image_url,
+        create_date,click_number,c.status "c.status",recommendation_grade,course_type_id,
+        t.id "t.id",type_name,parent_id,t.status "t.status"
+        from t_course c left join t_course_type t
+        on c.course_type_id = t.id
+        where c.id=#{id}
+    </select>
+
+    <select id="findByName" parameterType="String" resultMap="BaseResultMap">
+        select c.id "c.id", course_name,course_info,author,cover_image_url,
+        create_date,click_number,c.status "c.status",recommendation_grade,course_type_id,
+        t.id "t.id",type_name,parent_id,t.status "t.status"
+        from t_course c left join t_course_type t
+        on c.course_type_id = t.id
+        where c.course_name=#{name}
+    </select>
+
+    <select id="selectTopThree" resultMap="BaseResultMap">
+        select * from t_course order by click_number desc limit 3;
+    </select>
+</mapper>

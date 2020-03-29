@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="ajax:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/ajax_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="ajax" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/jstl/jstl.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/jstl/standard.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/json/json-lib-2.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/json/ezmorph-1.0.3.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/json/commons-logging.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/json/commons-lang-2.4.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/json/commons-beanutils-1.8.0.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/resource/jar/json/commons-collections-3.2.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/mybatis_hp/web/WEB-INF/lib/mysql-connector-java-5.1.18.jar" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="ajax/web/Web" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.ChapterMapper">
+    <sql id="chapter_all">
+      id,
+      course_id,
+      title,
+      info,
+      create_date,
+      status
+    </sql>
+    <resultMap id="chapterMap" type="Chapter">
+        <id property="id" column="id"></id>
+        <result property="courseId" column="course_id"></result>
+        <result property="title" column="title"></result>
+        <result property="info" column="info"></result>
+        <result property="createDate" column="createDate"></result>
+        <result property="status" column="status"></result>
+    </resultMap>
+    <select id="findAllByCourseId" parameterType="integer" resultType="Chapter">
+        select <include refid="chapter_all"></include>
+        from t_chapter
+        where
+        course_id = #{id}
+    </select>
+</mapper>

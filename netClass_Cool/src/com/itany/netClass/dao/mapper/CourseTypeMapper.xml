@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.CourseTypeMapper">
+    <sql id="type_all">
+        id,
+        type_name,
+        parent_id,
+        status
+    </sql>
+    <resultMap id="type" type="com.itany.netClass.entity.CourseType">
+        <id property="id" column="id"></id>
+        <result property="typeName" column="type_name"></result>
+        <result property="parentId" column="parent_id"></result>
+        <result property="status" column="status"></result>
+    </resultMap>
+    <insert id="addType" parameterType="CourseType">
+        insert into t_course_type
+        (type_name,parent_id,status)
+        values
+        (#{typeName},#{parentId},#{status})
+    </insert>
+    <select id="selectByName" parameterType="string" resultMap="type">
+        select <include refid="type_all"></include>
+        from t_course_type
+        where type_name = #{typeName}
+    </select>
+    <select id="selectByParentId" parameterType="integer" resultMap="type">
+        select <include refid="type_all"></include>
+        from t_course_type
+        <choose>
+            <when test="parentId != null and parentId != ''">
+                where parent_id = #{parentId}
+            </when>
+            <otherwise>
+                where parent_id is null
+            </otherwise>
+        </choose>
+    </select>
+    <select id="selectAllAndParentIdIsNull" resultMap="type">
+        select <include refid="type_all"></include>
+        from t_course_type
+        where parent_id is null
+    </select>
+    <select id="selectAllThird" resultMap="type">
+        select t3.id,t3.type_name,t3.parent_id,t3.status
+        from t_course_type t3
+        join t_course_type t2 on t3.parent_id = t2.id
+        join t_course_type t1 on t2.parent_id = t1.id
+        where t1.parent_id is null
+    </select>
+
+
+</mapper>

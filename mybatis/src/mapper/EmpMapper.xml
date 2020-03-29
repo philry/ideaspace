@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.EmpDao">
+
+
+    <resultMap id="empMapper" type="Emp">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="salary" column="salary"></result>
+        <!--
+            association标签:处理有一个关系的连接查询映射
+            property属性:表示对当前对象的哪一个属性进行映射
+            column属性:当前表中的哪一个字段与连接的表进行关联，可以理解为外键字段
+            javaType属性:指定当前属性的对象类型
+        -->
+        <association property="dept" column="dept_id" javaType="entity.Dept">
+            <id property="id" column="d.id"></id>
+            <result property="name" column="d.name"></result>
+        </association>
+    </resultMap>
+
+    <resultMap id="empMapper2" type="Emp">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="salary" column="salary"></result>
+        <!--
+            可以引用另一个已经存在的映射
+            resultMap属性:指向另一个已经存在的映射，简化开发
+            resultMap="dao.DeptDao.deptMapper"：
+                dao.DeptDao是另一个已经存在的映射DeptMapper.xml的mapper的namespace值
+                deptMapper是另一个已经存在的映射DeptMapper.xml的resultMap的id值
+         -->
+        <association property="dept" column="dept_id" javaType="entity.Dept" resultMap="dao.DeptDao.deptMapper"></association>
+    </resultMap>
+
+    <resultMap id="empMapper3" type="Emp">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="salary" column="salary"></result>
+        <!--
+            可以引用另一个查询方法
+            select:指向另一个已经存在的查询方法，简化开发
+            select="dao.DeptDao.selectById"：
+                dao.DeptDao是另一个已经存在的映射DeptMapper.xml的mapper的namespace值
+                selectById是另一个已经存在的映射DeptMapper.xml的select的id值
+         -->
+        <association property="dept" column="dept_id" javaType="entity.Dept" select="dao.DeptDao.selectById"></association>
+    </resultMap>
+
+    <insert id="insertEmp" parameterType="Emp">
+        insert into
+        t_emp
+          (name,salary,dept_id)
+        values
+          (#{name},#{salary},#{dept.id})
+    </insert>
+
+    <select id="selectById" parameterType="integer" resultMap="empMapper">
+        select e.id,e.name,e.salary,d.id 'd.id',d.name 'd.name'
+        from t_emp e
+        join t_dept d
+          on e.dept_id = d.id
+        where e.id = #{id}
+    </select>
+
+    <select id="selectById2" parameterType="integer" resultMap="empMapper2">
+        select e.id,e.name,e.salary,d.id 'd.id',d.name 'd.name'
+        from t_emp e
+        join t_dept d
+          on e.dept_id = d.id
+        where e.id = #{id}
+    </select>
+
+
+    <!--
+        该方式存在一个问题,N+1问题
+        所谓的N+1
+        表示假设查询员工的时候，查询出来N条记录
+        则每一条记录都有一个与之对应的dept信息
+        根据每一个部门的id去部门表进行一次查询
+        因此一共查询了1次员工，N次部门
+        一个方法最终查询次数为:N+1次
+        会导致查询效率较低
+        因此不建议使用
+    -->
+    <select id="selectById3" parameterType="int" resultMap="empMapper3">
+        select id,name,salary,dept_id
+        from t_emp
+        where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="empMapper3">
+        select id,name,salary,dept_id
+        from t_emp
+    </select>
+
+
+
+</mapper>

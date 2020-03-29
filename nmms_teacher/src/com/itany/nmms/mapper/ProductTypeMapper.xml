@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itany.nmms.dao.ProductTypeDao">
+
+	<sql id="typeColumn">
+		id,
+		name,
+		status
+	</sql>
+
+
+	<select id="selectByName" parameterType="string" resultType="productType">
+		select <include refid="typeColumn"></include>
+		from sys_product_type
+		where name = #{name}
+	</select>
+	
+	
+	<insert id="insertType" parameterType="productType">
+		insert into 
+		sys_product_type
+			(name,status)
+		values
+			(#{name},#{status})
+	</insert>
+	
+	<select id="selectAll" resultType="productType">
+		select <include refid="typeColumn"></include>
+		from sys_product_type
+	</select>
+
+	<select id="selectById" parameterType="integer" resultType="productType">
+		select <include refid="typeColumn"></include>
+		from sys_product_type
+		where id = #{id}
+	</select>
+	
+	<select id="selectByNameAndId" resultType="productType">
+		select <include refid="typeColumn"></include>
+		from sys_product_type
+		where name = #{0}
+		and id != #{1}
+	</select>
+
+
+	<update id="updateName">
+		update sys_product_type
+		set name = #{1}
+		where id = #{0}
+	</update>
+	
+	<update id="updateStatus">
+		update sys_product_type
+		set status = #{1}
+		where id = #{0}
+	</update>
+	
+	<select id="selectByStatus" parameterType="integer" resultType="productType">
+		select <include refid="typeColumn"></include>
+		from sys_product_type
+		where status = #{status}
+	</select>
+
+</mapper>

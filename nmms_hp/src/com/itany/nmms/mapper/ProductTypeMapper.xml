@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itany.nmms.dao.ProductTypeMapper" >
+  <resultMap id="BaseResultMap" type="ProductType" >
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="status" property="status"/>
+  </resultMap>
+
+  <sql id="ProductTypeColumn" >
+    id, name, status
+  </sql>
+
+  <insert id="insert" parameterType="ProductType" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_product_type
+    (name,status)
+    values(#{name},#{status})
+  </insert>
+
+  <select id="selectByName" parameterType="String" resultType="ProductType">
+    select <include refid="ProductTypeColumn"></include>
+    from sys_product_type
+    where name=#{name}
+  </select>
+
+  <select id="findAll" resultType="ProductType">
+    select <include refid="ProductTypeColumn"></include>
+    from sys_product_type
+  </select>
+
+  <update id="update" parameterType="ProductType">
+    update sys_product_type
+    set name=#{name},status=#{status}
+    where id=#{id}
+  </update>
+
+  <select id="selectById" parameterType="int" resultType="ProductType">
+    select <include refid="ProductTypeColumn"></include>
+    from sys_product_type where id=#{id}
+  </select>
+</mapper>

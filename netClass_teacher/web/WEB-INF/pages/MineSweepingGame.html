@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>扫雷</title>
+	<style type="text/css">
+		* {
+			margin: 0px;
+			padding: 0px;
+		}
+		table {
+			margin: auto;
+		}
+		td {
+			width: 40px;
+			height: 40px;
+			border: 1px solid black;
+			text-align: center;
+		}
+		.closed {
+			background-color: lightgray;
+		}
+		.opened0 {
+			background-color: #FFFFCC;
+		}
+		.opened1 {
+			background-color: #FF99CC;
+		}
+		.opened2 {
+			background-color: #FF6699;
+		}
+		.opened3 {
+			background-color: #FF33FF;
+		}
+		.opened4 {
+			background-color: #FF3366;
+		}
+		.opened5 {
+			background-color: #FF3300;
+		}
+		.opened6 {
+			background-color: #FF00FF;
+		}
+		.opened7 {
+			background-color: #FF0066;
+		}
+		.opened8 {
+			background-color: #FF0000;
+		}
+		.mark {
+			background: url('mark.jpg') no-repeat;
+			background-size: 100% 100%;
+		}
+		.thunder {
+			background: url('thunder.jpg') no-repeat;
+			background-size: 100% 100%;
+		}
+		.tips {
+			background-color: #00FFFF;
+		}
+
+
+	</style>
+	<script type="text/javascript" src="jquery-1.11.3.min.js" ></script>
+
+	<script type="text/javascript">
+		var lv = 0;//等级,0,1,2
+		var gameLvs = [ "1", "2", "3" ];
+		var sizes = [ 9, 16, 19 ];//不同等级的桌面大小
+		var thunders = [ 10, 40, 99 ];//不同等级的雷的数量
+
+		//重新开始时,需要重置这些值-begin
+		var markNum = 0;//被标记数
+		var trueMarkThunderNum = 0;//被标记的真正的雷的数量
+		var openNum = 0;//被点开的
+		var time = 0;//计时
+		//重新开始时,需要重置这些值-end
+
+		var thundersArr = new Array();//记录雷的位置
+
+		var timer;//计时器
+		var times = 0;
+
+		$(function(){
+			//去掉默认的contextmenu事件,否则会和右键事件同时出现
+			document.oncontextmenu = function(e){
+				e.preventDefault();
+			};
+			window.onmousewheel = document.onmousewheel = function(e){
+				console.log(e);
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			};
+			init();
+			setThunder(thunders[lv]);
+			initTable();
+
+			timer = setInterval(function (){
+				$('#useTime').text(times);
+				$('#surplusThunders').text(thunders[lv] - trueMarkThunderNum);
+				times++;
+			}, 1000);
+			
+		});
+
+		function init(){
+			/*
+			while(true){
+				var lvSelect = window.prompt('请选择游戏难度(1,2,3):');
+				//取消null
+				//console.log('lvSelect=', lvSelect);
+				var regexp = /^[123]$/;
+				//console.log(regexp.test(lvSelect));
+				if(null == lvSelect || !regexp.test(lvSelect)){
+					alert('难度只有1,2,3');
+				}else{
+					//console.log('lv=', lvSelect);
+					lv = parseInt(lvSelect) - 1;
+					break;
+				}
+			}*/
+			for(var i=0; i<sizes[lv]; i++){
+				thundersArr[i] = new Array();
+				for(var j=0; j<sizes[lv]; j++){
+					thundersArr[i][j] = { isClick: false, count: 0, has: false, isMark: false };
+				}
+			}
+		}
+
+		//初始化游戏桌面
+		function initTable(){
+			var tb = $('#myTable');
+			for(var i=0; i<sizes[lv]; i++){
+				var tr = $('<tr></tr>');
+				for(var j=0; j<sizes[lv]; j++){
+					var has = thundersArr[i][j].has;
+					var td = $('<td></td>');
+					td.attr('x', i);
+					td.attr('y', j);
+					td.addClass('closed');
+					//不用click
+					//鼠标按键按压事件
+					td.bind('mousedown',function(e){
+						var btn = e.button;
+						//e.button:0左键点击,1滚轮点击,2右键点击
+						//console.log('mousedown-button===', e.button);
+						//console.log('mousedown', this);
+						var x = $(this).attr('x');
+						var y = $(this).attr('y');
+						var td = thundersArr[x][y];
+						var isThunder = td.has;
+						var isClick = td.isClick;
+						var isMark = td.isMark;
+						switch (btn) {
+							case 0://左键点击
+								if(isClick){//已点开
+									break;
+								}
+								if(isMark){//已标记不可点
+									break;
+								}
+								if(isThunder){//是地雷
+									$(this).removeClass('closed');
+									$(this).addClass('thunder');
+									clearGame('game over!');
+									return;
+								}
+								//不是雷
+								td.isClick = true;
+								$(this).removeClass('closed');
+								$(this).addClass('opened' + td.count);
+								openNum++;
+								if(0 != td.count){
+									$(this).text(td.count);
+								}else{
+									autoClearZero(x, y);
+								}
+								break;
+							case 1:
+								//鼠标滚轮按压,给予提示
+								showTips(x, y);
+								//console.log('showTips=', x, y);
+								break;
+							case 2:
+								if(isClick){//已点开
+									break;
+								}
+								if(isMark){//去除标记
+									markNum--;//被标记数
+									if(isThunder){//是地雷
+										trueMarkThunderNum--;
+									}
+									$(this).removeClass('mark');
+									$(this).addClass('closed');
+									td.isMark = false;
+								}else{//做标记
+									markNum++;//被标记数
+									if(isThunder){//是地雷
+										trueMarkThunderNum++;
+									}
+									$(this).removeClass('closed');
+									$(this).addClass('mark');
+									td.isMark = true;
+								}
+								break;
+							default:
+								// statements_def
+								break;
+						}
+
+						//判断输赢
+						if(thunders[lv] == trueMarkThunderNum || openNum == (sizes[lv] * sizes[lv] - thunders[lv])){
+							clearGame('you win!');
+						}
+					});
+					//鼠标按键抬起事件
+					td.bind('mouseup',function(e){
+						var btn = e.button;
+						if(1 == btn){//滚轮抬起
+							//移除提示
+							$('.tips').removeClass('tips');
+						}
+					});
+
+					tr.append(td);
+				}
+				tb.append(tr);
+			}
+
+			for (var i = 0; i < sizes[lv]; i++) {
+				for (var j = 0; j < sizes[lv]; j++) {
+					var isThunder = thundersArr[i][j].has;
+					//不是雷则,计算四周的地雷数量
+					if(!isThunder){
+						var counts = countAroundThunders(i, j);
+						thundersArr[i][j].count = counts;
+					}
+				}
+			}
+		}
+
+		//生成地雷的位置,不可重复放置
+		function setThunder(count){
+			var size = sizes[lv];//桌面尺寸
+			for(var i=0; i<count; i++){
+				var has = true;//当前位置有地雷
+				while(has){//有,生成新的位置坐标
+					var x = random(size);
+					var y = random(size);
+					has = thundersArr[x][y].has;
+					if(!has){//没有,放到当前位置坐标
+						thundersArr[x][y].has = true;
+						ths.push({x: x, y: y});
+					}
+				}
+			}
+			console.log(ths.sort(function(a, b){
+				if(a.x == b.x){
+					return a.y - b.y;
+				}
+				return a.x - b.x;
+			}));
+		}
+		//作弊
+		var ths = new Array();
+
+		//统计周围的雷的数量
+		function countAroundThunders(x, y){
+			//边界
+			var begin = 0;
+			var end = sizes[lv];
+			var count = 0;
+			//xy
+			//00  01  02
+			//10 (11) 12
+			//20  21  22
+			//八个位置
+			//上
+			if((x - 1) >= begin){
+				var isThunder = thundersArr[x - 1][y].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			//右上
+			if((x - 1) >= begin && (y + 1) < end){
+				var isThunder = thundersArr[x - 1][y + 1].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			//右
+			if((y + 1) < end){
+				var isThunder = thundersArr[x][y + 1].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			//右下
+			if((x + 1) < end && (y + 1) < end){
+				var isThunder = thundersArr[x + 1][y + 1].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			//下
+			if((x + 1) < end){
+				var isThunder = thundersArr[x + 1][y].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			//左下
+			if((x + 1) < end && (y - 1) >= begin){
+				var isThunder = thundersArr[x + 1][y - 1].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			//左
+			if((y - 1) >= begin){
+				var isThunder = thundersArr[x][y - 1].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			//左上
+			if((x - 1) >= begin && (y - 1) >= begin){
+				var isThunder = thundersArr[x - 1][y - 1].has;
+				if(isThunder){
+					count++;
+				}
+			}
+			return count;
+		}
+
+		//显示"0"方块的周围连续的方块(未打开的,不是雷的方块)
+		function autoClearZero(x, y, tips){
+			//边界
+			var begin = 0;
+			var end = sizes[lv];
+			x = parseInt(x);
+			y = parseInt(y);
+			//xy
+			//00  01  02
+			//10 (11) 12
+			//20  21  22
+			//八个位置
+			//上
+			if((x - 1) >= begin){
+				doAutoOpen(x - 1, y, tips);
+			}
+			//右上
+			if((x - 1) >= begin && (y + 1) < end){
+				doAutoOpen(x - 1, y + 1, tips);
+			}
+			//右
+			if((y + 1) < end){
+				doAutoOpen(x, y + 1, tips);
+			}
+			//右下
+			if((x + 1) < end && (y + 1) < end){
+				doAutoOpen(x + 1, y + 1, tips);
+			}
+			//下
+			if((x + 1) < end){
+				doAutoOpen(x + 1, y, tips);
+			}
+			//左下
+			if((x + 1) < end && (y - 1) >= begin){
+				doAutoOpen(x + 1, y - 1, tips);
+			}
+			//左
+			if((y - 1) >= begin){
+				doAutoOpen(x, y - 1, tips);
+			}
+			//左上
+			if((x - 1) >= begin && (y - 1) >= begin){
+				doAutoOpen(x - 1, y - 1, tips);
+			}
+		}
+
+		//打开可以显示的
+		function doAutoOpen(x, y, tips){
+			//console.log('doAutoOpen:', x, y);
+			var target = $('td[x='+ x +'][y='+ y +']');
+			var td = thundersArr[x][y];
+			var isThunder = td.has;
+			var isClick = td.isClick;
+			if(tips && !isClick){//是提示,且没有被点过
+				$(target).addClass('tips');
+				return;
+			}
+			//没有被点击过,且不是雷
+			if(!isClick && !isThunder){
+				//打开
+				td.isClick = true;
+				target.removeClass('closed');
+				target.addClass('opened' + td.count);
+				if(0 != td.count){
+					target.text(td.count);
+				}
+				openNum++;
+				if(0 == td.count){
+					autoClearZero(x, y);
+				}
+			}
+		}
+
+		function showTips(x, y){
+			autoClearZero(x, y, true);
+			var td = thundersArr[x][y];
+			var target = $('td[x='+ x +'][y='+ y +']');
+			if(!td.isClick){
+				$(target).addClass('tips');
+			}
+		}
+
+		//清空游戏
+		function clearGame(msg){
+			$('td').unbind('mousedown');
+			$('td').unbind('mouseup');
+			clearInterval(timer);//停止计时器
+			markNum = 0;//被标记数
+			trueMarkThunderNum = 0;//被标记的真正的雷的数量
+			openNum = 0;//被点开的
+			time = 0;//计时
+			alert(msg);
+			var confirm = window.confirm('是否重新开始');
+			//true确定,false取消
+			//console.log('confirm=', confirm);
+			if(!confirm){//不重新开始
+				return;
+			}
+			location.reload();
+		}
+
+		function random(len){
+			var num = parseInt(Math.random() * len);
+			//console.log("num=", num);
+			return num;
+		}
+
+	</script>
+</head>
+<body>
+	
+	<div style="margin: 20px;" >
+		<h1 style="text-align: center; color: pink;" >扫雷</h1>
+		<br/>
+		<table id="myTable">
+			
+		</table>
+
+		<br/>
+		<div style="width: 35%;text-align: center;margin: auto;" >
+			<div style="float: left; color: blue;">
+				<label>时间:</label>
+				<span id="useTime" ></span>
+			</div>
+			<div style="float: right; color: red;">
+				<label>地雷:</label>
+				<span id="surplusThunders" ></span>
+			</div>
+			<!-- 清除浮动 -->
+			<div style="clear: both" ></div>
+			<br/>
+		</div>
+	</div>
+
+</body>
+</html>

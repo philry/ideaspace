@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.GoldPointsMapper">
+    <resultMap id="goldPointsMap" type="GoldPoints">
+        <id property="id" column="id"></id>
+        <result property="pointCount" column="point_count"></result>
+        <result property="goldCount" column="gold_count"></result>
+        <result property="info" column="info"></result>
+        <result property="createDate" column="create_date"></result>
+        <association property="user" column="user_id" javaType="com.itany.netClass.entity.User"
+                     select="com.itany.netClass.dao.UserMapper.selectById"></association>
+    </resultMap>
+
+
+    <select id="selectGoldPointsRecordByUserId" parameterType="int" resultMap="goldPointsMap">
+        select id,point_count,gold_count,info,create_date,user_id
+        from t_gold_points
+        where user_id=#{id}
+    </select>
+
+    <insert id="insert">
+        insert into
+        t_gold_points
+        (user_id, info, create_date, point_count,gold_count)
+        values
+        (#{user.id},#{info},#{createDate},#{pointCount},#{goldCount})
+
+
+    </insert>
+
+    <select id="selectMyPointByUserId" parameterType="int" resultType="int">
+        select sum(point_count)
+        from t_gold_points
+        where user_id=#{id}
+    </select>
+
+    <select id="selectMyGoldByUserId" parameterType="int" resultType="int">
+        select sum(gold_count)
+        from t_gold_points
+        where user_id=#{id}
+    </select>
+
+</mapper>

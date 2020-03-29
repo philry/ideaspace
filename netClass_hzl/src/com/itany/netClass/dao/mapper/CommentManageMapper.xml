@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.CommentManageMapper">
+
+    <resultMap id="commentManageMap" type="Comment">
+        <id property="id" column="cid"></id>
+        <result property="context" column="context"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="status" column="status"></result>
+        <result property="praiseCount" column="praiseCount"></result>
+        <association property="user" column="user_id" javaType="User">
+            <id property="id" column="uid"></id>
+            <result property="nickname" column="u.nickname"></result>
+        </association>
+    </resultMap>
+
+    <select id="findByParam" parameterType="Comment" resultMap="commentManageMap">
+        select c.id  as 'cid' ,c.context,c.create_date,c.user_id,c.status,
+        u.id as 'uid' ,u.nickname,
+        (select count(1) from t_praise p where p.comment_id=c.id) as praiseCount
+        from t_comment c
+        join t_user u on c.user_id=u.id
+        <where>
+            <if test="id!=null">
+                and c.id=#{id}
+            </if>
+            <if test="user!=null">
+                <if test="user.nickname!=null and user.nickname!=''">
+                    and u.nickname like #{user.nickname} escape '/'
+                </if>
+            </if>
+            <if test="context!=null and context!=''">
+                and c.context like #{context} escape '/'
+            </if>
+            <if test="startdate !=null and startdate!=''">
+                and c.create_date &gt; #{startdate}
+            </if>
+            <if test="endDate !=null and endDate!=''">
+                and c.create_date &lt; #{endDate}
+            </if>
+            <if test="1==1">
+                and c.status = 2
+            </if>
+
+        </where>
+
+    </select>
+</mapper>

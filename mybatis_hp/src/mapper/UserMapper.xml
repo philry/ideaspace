@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.UserDao">
+    <sql id="userColumn">
+        id,username,password,phone,address
+    </sql>
+
+    <insert id="insert" parameterType="entity.User">
+        insert into
+        t_user(username,password,phone,address)
+        values (#{username},#{password},#{phone},#{address})
+    </insert>
+
+    <select id="selectById" parameterType="int" resultType="entity.User">
+        select id,username,password,phone,address
+        from t_user where id=#{id};
+    </select>
+
+    <select id="selectAll" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user ;
+    </select>
+
+    <select id="selectByNameAndPassword" parameterType="entity.UserParameter" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user where username=#{username} and password=#{password};
+    </select>
+
+    <select id="selectByNameAndPassword2" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user where username=#{a} and password=#{pwd};
+    </select>
+
+    <select id="selectByNameAndPassword3" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user where username=#{0} and password=#{1};
+    </select>
+
+    <select id="selectById2" parameterType="int" resultType="entity.User">
+        select user_id id,user_username username,user_password password,user_phone phone,user_address address
+        from t_user2 where user_id=#{id};
+    </select>
+
+    <select id="selectByName" parameterType="String" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user where username like #{username} escape '/';
+    </select>
+
+    <select id="selectByParam" parameterType="entity.User" resultType="entity.User">
+        select  <include refid="userColumn"></include>
+        from t_user where 1=1
+        <if test="id!=null and id!=''"> and id=#{id}</if>
+        <if test="username!=null and username!=''">and username=#{username}</if>
+        <if test="password!=null and password!=''">and password=#{password}</if>
+        <if test="phone!=null and phone!=''">and phone=#{phone}</if>
+        <if test="address!=null and address!=''">and address=#{address}</if>
+    </select>
+
+    <update id="update" parameterType="entity.User">
+        update t_user
+        <set>
+            <if test="username!=null and username!=''">username=#{username},</if>
+            <if test="password!=null and password!=''">password=#{password},</if>
+            <if test="phone!=null and phone!=''">phone=#{phone},</if>
+            <if test="address!=null and address!=''">address=#{address}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectByParam4" parameterType="entity.User" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="username!=null and username!=''">username=#{uername}</if>
+            <if test="password!=null and password!=''">password=#{password}</if>
+            <if test="phone!=null and phone!=''">phone=#{phone}</if>
+            <if test="address!=null and address!=''">address=#{address}</if>
+        </trim>
+    </select>
+
+    <select id="selectByIds" resultType="entity.User" parameterType="int">
+        select <include refid="userColumn" ></include>
+        from t_user where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=","></foreach>
+    </select>
+
+</mapper>

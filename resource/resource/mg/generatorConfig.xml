@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	 <classPathEntry location="mysql-connector-java-5.1.18-bin.jar" />
+
+  <context id="mysql" targetRuntime="MyBatis3">
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql://127.0.0.1:3306/p2p"
+        userId="root"
+        password="root">
+    </jdbcConnection>
+
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+    <javaModelGenerator targetPackage="com.itany.p2p.entity" targetProject="src">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+    <sqlMapGenerator targetPackage="com.itany.p2p.mapper"  targetProject="src">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>
+
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.itany.p2p.dao"  targetProject="src">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+
+	<table schema="p2p" tableName="APPLY" domainObjectName="Apply"></table>
+
+	<table schema="p2p" tableName="COMPANY" domainObjectName="Company"></table>
+	
+	<table schema="p2p" tableName="LENDINGPERIOD" domainObjectName="Lendingperiod"></table>
+	
+	<table schema="p2p" tableName="NEWS" domainObjectName="News"></table>
+	
+	<table schema="p2p" tableName="PRODUCT" domainObjectName="Product"></table>
+	
+	<table schema="p2p" tableName="PRODUCTTYPE" domainObjectName="ProductType"></table>
+	
+	<table schema="p2p" tableName="SYSUSER" domainObjectName="Sysuser"></table>
+	
+  </context>
+</generatorConfiguration>

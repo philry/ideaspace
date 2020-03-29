@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 示例Mapper -->
+<mapper namespace="com.itany.netClass.dao.UserMapper">
+
+	<sql id="userColumn">
+		id,
+		login_name "username",
+		nickname,
+		password,
+		role,
+		email,
+		login_date "loginDate",
+		create_date "createDate",
+		status
+	</sql>
+
+	<!-- 使用Oracle触发器实现数值类型的主键的自增长 -->
+	<insert id="insert" parameterType="User">
+		insert into t_user
+		(login_name, nickname, password, role, email, login_date, create_date, status)
+		values
+		(#{loginName}, #{nickname}, #{password}, #{role}, #{email}, #{loginDate}, #{createDate}, #{status})
+	</insert>
+
+	<insert id="insertOracle1" parameterType="User" >
+		<selectKey keyProperty="id" order="AFTER" resultType="integer" >
+			select user_seq.currval from dual
+		</selectKey>
+		insert into t_user
+			(id,login_name,nickname,password,role,email,login_date,create_date,status)
+		values
+			(user_seq.nextval,#{loginName},#{nickname},#{password},#{role},#{email},#{loginDate,jdbcType=DATE},#{createDate},#{status})
+	</insert>
+	
+	<insert id="insertOracle2" parameterType="User" >
+		<selectKey keyProperty="id" order="BEFORE" resultType="integer" >
+			select user_seq.nextval from dual
+		</selectKey>
+		insert into t_user
+			(id,login_name,nickname,password,role,email,login_date,create_date,status)
+		values
+			(#{id},#{loginName},#{nickname},#{password},#{role},#{email},#{loginDate,jdbcType=DATE},#{createDate},#{status})
+	</insert>
+	
+	<update id="updateById" parameterType="User">
+		update t_user
+		<set>
+			<if test="nickname != null">
+				nickname = #{nickname},
+			</if>
+			<if test="password != null">
+				password = #{password},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="selectByCondition" parameterType="com.itany.netClass.vo.UserQuery"
+		resultType="User">
+		select
+		<include refid="userColumn"></include>
+		from t_user
+		<where>
+			<if test="nicknameLike != null">
+				and nickname like concat(concat('%', #{nicknameLike}), '%')
+			</if>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="createDateBegin != null">
+				create_date &gt;= #{createDateBegin}
+			</if>
+			<if test="createDateEnd != null">
+				create_date &lt;= #{createDateEnd}
+			</if>
+		</where>
+	</select>
+
+	<!-- oracle函数与存储过程的调用 -->
+	<insert id="insertReturnId" statementType="CALLABLE"
+		parameterType="User">
+		{call addUser(#{loginName,mode=IN,jdbcType=VARCHAR},#{nickname,mode=IN,jdbcType=VARCHAR},#{password,mode=IN,jdbcType=VARCHAR},#{role,mode=IN,jdbcType=VARCHAR},#{email,mode=IN,jdbcType=VARCHAR},#{createDate,mode=IN,jdbcType=TIMESTAMP},#{status,mode=IN,jdbcType=INTEGER},#{id,mode=OUT,jdbcType=INTEGER}) }
+	</insert>
+
+	<select id="getUserCount" parameterType="string" resultType="integer">
+		select getUserCount(#{nickname}) from dual
+	</select>
+
+</mapper>

@@ -1,0 +1,2 @@
+transaction=com.itany.netClass.transaction.impl.MyBatisTransactionManager
+userMapper=com.itany.netClass.dao.UserMapper

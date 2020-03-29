@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.CommentMapper">
+    <sql id="comment_all">
+        c.id,
+        c.context,
+        c.create_date,
+        c.user_id,
+        c.resource_id,
+        c.status,
+        u.id 'u.id',
+        u.login_name 'username',
+        p.id 'p.id'
+    </sql>
+    <resultMap id="commentMap" type="com.itany.netClass.entity.Comment">
+        <id property="id" column="id"></id>
+        <result property="context" column="context"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="userId" column="user_id"></result>
+        <result property="resourceId" column="resource_id"></result>
+        <result property="status" column="status"></result>
+        <association property="user" column="user_id" javaType="User">
+            <id property="id" column="user_id"></id>
+            <result property="loginName" column="username"></result>
+        </association>
+        <collection property="praises" column="p.id" ofType="Praise">
+            <id property="id" column="p.id"></id>
+        </collection>
+    </resultMap>
+    <select id="findAllWait" resultMap="commentMap">
+        select <include refid="comment_all"></include>
+        from t_comment c
+        join t_user u on c.user_id = u.id
+        join t_praise p on c.id = p.comment_id
+        where
+        c.status = 2
+    </select>
+    <update id="modifyEnable" parameterType="integer">
+        update t_comment
+        set
+        status = 0
+        where
+        id = #{id}
+    </update>
+    <update id="modifyDisable" parameterType="integer">
+        update t_comment
+        set
+        status = 1
+        where
+        id = #{id}
+    </update>
+    <select id="findByData" parameterType="Comment" resultMap="commentMap">
+        select <include refid="comment_all"></include>
+        from t_comment c
+        left join t_user u on c.user_id = u.id
+        left join t_praise p on c.id = p.comment_id
+        <where>
+            <if test="context != null and context != ''">
+                and c.context = #{context}
+            </if>
+            <if test="user.loginName != null and user.loginName != ''">
+                and u.login_name = #{user.loginName}
+            </if>
+            <choose>
+                <when test="(startDate != null and startDate != '') and (endDate == null or endDate == '')">
+                    and date_format(c.create_date ,'%Y-%m-%d') &gt;= date_format(#{startDate},'%Y-%m-%d')
+                </when>
+                <when test="(startDate == null or startDate == '') and (endDate != null and endDate != '')">
+                    and date_format(c.create_date ,'%Y-%m-%d') &lt;= date_format(#{endDate},'%Y-%m-%d')
+                </when>
+                <when test="(startDate != null and startDate != '') and (endDate != null and endDate != '')">
+                    and
+                      date_format(c.create_date ,'%Y-%m-%d')
+                    between
+                      date_format(#{startDate},'%Y-%m-%d')
+                    and
+                      date_format(#{endDate},'%Y-%m-%d')
+                </when>
+            </choose>
+            <if test="'1'=='1'">
+                and c.status = 2
+            </if>
+        </where>
+    </select>
+    <select id="findByChapterId" parameterType="integer" resultMap="commentMap">
+        select <include refid="comment_all"></include>
+        from t_comment c
+        join t_user u on c.user_id = u.id
+        left join t_praise p on c.id = p.comment_id
+        join t_resource r on c.resource_id = r.id
+        join t_chapter tc on r.chapter_id = tc.id
+        where
+        tc.id = #{id}
+        and
+        c.status != 2
+    </select>
+    <select id="findAllPassed" resultMap="commentMap">
+        select <include refid="comment_all"></include>
+        from t_comment c
+        join t_user u on c.user_id = u.id
+        left join t_praise p on c.id = p.comment_id
+        where
+        c.status != 2
+    </select>
+    <update id="modifyById" parameterType="integer">
+        update t_comment
+        set
+        status = ( case status when 1 then 0 when 0 then 1 else status end )
+        where
+        id = #{id}
+    </update>
+    <select id="findPassedByData" parameterType="Comment" resultMap="commentMap">
+        select <include refid="comment_all"></include>
+        from t_comment c
+        join t_user u on c.user_id = u.id
+        left join t_praise p on c.id = p.comment_id
+        <where>
+            <if test="context != null and context != ''">
+                and c.context = #{context}
+            </if>
+            <if test="user.loginName != null and user.loginName != ''">
+                and u.login_name = #{user.loginName}
+            </if>
+            <choose>
+                <when test="(startDate != null and startDate != '') and (endDate == null or endDate == '')">
+                    and date_format(c.create_date ,'%Y-%m-%d') &gt;= date_format(#{startDate},'%Y-%m-%d')
+                </when>
+                <when test="(startDate == null or startDate == '') and (endDate != null and endDate != '')">
+                    and date_format(c.create_date ,'%Y-%m-%d') &lt;= date_format(#{endDate},'%Y-%m-%d')
+                </when>
+                <when test="(startDate != null and startDate != '') and (endDate != null and endDate != '')">
+                    and
+                    date_format(c.create_date ,'%Y-%m-%d')
+                    between
+                    date_format(#{startDate},'%Y-%m-%d')
+                    and
+                    date_format(#{endDate},'%Y-%m-%d')
+                </when>
+            </choose>
+            <if test="status != null and status != '' and status != '-1'">
+                and c.status = #{status}
+            </if>
+            <if test="'1'=='1'">
+                and c.status != 2
+            </if>
+        </where>
+    </select>
+</mapper>

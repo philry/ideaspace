@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.netClass.dao.ResourceMapper">
+    <resultMap id="resourceMap" type="Resource">
+        <id property="id" column="id"></id>
+        <result property="title" column="title"></result>
+        <result property="path" column="path"></result>
+        <result property="coverImageUrl" column="cover_image_url"></result>
+        <result property="originalName" column="original_name"></result>
+        <result property="fileSize" column="file_size"></result>
+        <result property="fileType" column="file_type"></result>
+        <result property="clickCount" column="click_count"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="costType" column="cost_type"></result>
+        <result property="costNumber" column="cost_number"></result>
+        <result property="status" column="status"></result>
+        <association property="user" column="user_id" javaType="com.itany.netClass.entity.User"
+                     select="com.itany.netClass.dao.UserMapper.selectById"></association>
+        <association property="chapter" column="chapter_id" javaType="com.itany.netClass.entity.Chapter"
+                     select="com.itany.netClass.dao.ChapterMapper.selectById"></association>
+    </resultMap>
+
+    <select id="findAllResource" resultMap="resourceMap">
+        select id,title,path,cover_image_url,original_name,file_size,file_type,click_count,create_date,cost_type,cost_number,user_id,chapter_id,status
+        from t_resource
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="resourceMap">
+        select id,title,path,cover_image_url,original_name,file_size,file_type,click_count,create_date,cost_type,cost_number,user_id,chapter_id,status
+        from t_resource
+        where id=#{id}
+    </select>
+
+    <update id="updateResource" parameterType="Resource">
+        update t_resource
+        <set>
+            <if test="title!=null and title!=''">
+                title=#{title},
+            </if>
+            <if test="path!=null and path!=''">
+                path=#{path},
+            </if>
+            <if test="coverImageUrl!=null and coverImageUrl!=''">
+                cover_image_url=#{coverImageUrl},
+            </if>
+            <if test="originalName!=null and originalName!=''">
+                original_name=#{originalName},
+            </if>
+            <if test="fileSize!=null">
+                file_size=#{fileSize},
+            </if>
+            <if test="fileType!=null and fileType!=''">
+                file_type=#{fileType},
+            </if>
+            <if test="clickCount!=null">
+                click_count=#{clickCount},
+            </if>
+            <if test="createDate!=null and createDate!=''">
+                create_date=#{createDate},
+            </if>
+            <if test="costType!=null">
+                cost_type=#{costType},
+            </if>
+            <if test="costNumber!=null">
+                cost_number=#{costNumber},
+            </if>
+            <if test="user.id!=null">
+                user_id=#{user.id},
+            </if>
+            <if test="chapter.id!=null">
+                chapter_id=#{chapter.id},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

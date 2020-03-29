@@ -1,0 +1,8 @@
+前台:
+	忘记密码功能:为用户提供一个可以修改密码的链接,
+		链接5分钟内有效,模拟邮箱修改密码。
+		
+		
+		
+		
+		http://localhost:8080/netClass/user/modifyPwd.do?......&newPwd=123

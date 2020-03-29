@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/ajax" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/mybatis" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/netClass_Cool" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/netClass_hzl" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/netClass_jts" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/netClass_jts_v3" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/netClass_teacher" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/nmms" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/resource" vcs="svn" />
+  </component>
+</project>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <package name="entity"></package>
+    </typeAliases>
+    <environments default="mybatis">
+        <environment id="mybatis">
+            <transactionManager type="jdbc"></transactionManager>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis?useUnicode=true&amp;characterEncoding=utf-8"></property>
+                <property name="username" value="root"></property>
+                <property name="password" value="994875"></property>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"></mapper>
+        <mapper resource="mapper/DeptMapper.xml"></mapper>
+        <mapper resource="mapper/EmpMapper.xml"></mapper>
+        <mapper class="dao.UserMapper"></mapper>
+    </mappers>
+</configuration>

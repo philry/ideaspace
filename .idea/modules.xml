@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ajax/ajax.iml" filepath="$PROJECT_DIR$/ajax/ajax.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ajax_hp/ajax_hp.iml" filepath="$PROJECT_DIR$/ajax_hp/ajax_hp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ajax_hp/ajax_hp1.iml" filepath="$PROJECT_DIR$/ajax_hp/ajax_hp1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mybatis/mybatis.iml" filepath="$PROJECT_DIR$/mybatis/mybatis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mybatis_hp/mybatis_hp.iml" filepath="$PROJECT_DIR$/mybatis_hp/mybatis_hp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mybatis_lianxi/mybatis_lianxi.iml" filepath="$PROJECT_DIR$/mybatis_lianxi/mybatis_lianxi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netClass_Cool/netClass_Cool.iml" filepath="$PROJECT_DIR$/netClass_Cool/netClass_Cool.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netClass_hzl/netClass_hzl.iml" filepath="$PROJECT_DIR$/netClass_hzl/netClass_hzl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netClass_jts/netClass_jts.iml" filepath="$PROJECT_DIR$/netClass_jts/netClass_jts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netClass_jts_v3/netClass_jts_v3.iml" filepath="$PROJECT_DIR$/netClass_jts_v3/netClass_jts_v3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netClass_teacher/netClass_teacher.iml" filepath="$PROJECT_DIR$/netClass_teacher/netClass_teacher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nmms/nmms.iml" filepath="$PROJECT_DIR$/nmms/nmms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/resource/resource.iml" filepath="$PROJECT_DIR$/resource/resource.iml" />
+    </modules>
+  </component>
+</project>

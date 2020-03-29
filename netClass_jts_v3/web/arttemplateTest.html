@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>arttemplateTest</title>
+
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="this is my page">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript" src="js/jquery.js" ></script>
+<script type="text/javascript" src="js/template-web.js" ></script>
+
+<script type="text/javascript">
+	//浏览器的
+	//key value 都是字符串
+	var j = {"username":"admin", "pwd":"xxxx"};
+	
+	localStorage.setItem("user", JSON.stringify(j));//存放值
+	var u = localStorage.getItem("user");
+	console.log('user===', JSON.parse(u));
+	//sessionStorage.setItem("u", "admin-1");//存放值
+	var t = new Date().getTime();
+	//console.log(t);
+	var d = new Date(t + 60000);
+	//console.log(d.getTime());
+	//console.log(d.getHours()+":"+d.getMinutes()+":"+d.getSeconds());
+	document.cookie= "a=bbb; expires="+ d;
+	document.cookie= "a1=bbb1; expires="+ d;
+	console.log("cookie="+ document.cookie);
+	
+	$(function(){
+		$.ajax({
+			url: "types.json",
+			type: "post",
+			dataType: "json",
+			data: "",
+			success: function(data){
+				//console.log('data===', data);
+				
+				//数据格式
+				//var j = {key: "value"};
+				//html代码 = template(模板的id, 数据);
+				var txt = template("template1", {"arr": data, "title":"abc"});
+				//console.log(txt);
+				
+				//普通方式
+// 				var txt = "<ul>";
+// 				for(var index in data){
+// 					txt += `<li>`+data[index].typeName+`</li>`;
+// 				}
+// 				txt += "</ul>";
+
+				$("#test").html(txt);
+				
+			},
+			error: function(d){
+				alert("error");
+				console.log(d);
+			}
+		});
+	});
+
+
+//old
+// 	<li idField="{{item.id}}" >{{item.typeName}}-
+// 		<!-- if item.status == 1 -->
+// 		<!-- <span style="color:red;" >禁用</span> -->
+// 		<!-- /if -->
+// 		{{if item.status == 0}}
+// 		<span style="color:green;" >启用</span>
+// 		{{else}}
+// 		<span style="color:red;" >禁用</span>
+// 		{{/if}}
+// 	</li>
+
+</script>
+
+</head>
+
+<body>
+	<div id="test" >
+		<ul>
+			<li>
+				<label>1a级</label>
+				<ul>
+					<li>
+						<label>2a级</label>
+						<ul>
+							<li>3a级</li>
+							<li>3b级</li>
+							<li>3c级</li>
+							<li>3d级</li>
+						</ul>
+					</li>
+					<li>
+						<label>2b级</label>
+						<ul>
+							<li>3a级</li>
+							<li>3b级</li>
+							<li>3c级</li>
+							<li>3d级</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+
+
+	<script id="template1" type="text/html" >
+		<label style="color:red;" >{{title}}</label>
+		<ul>
+			<!-- each 数组属性名称  其中元素的别名  元素在数组中的下标 -->
+			{{each arr item1 index1}}
+			<li>
+				<label>1级-{{item1.typeName}}</label>
+				<ul>
+					{{each item1.children item2 index2}}
+					<li>
+						<label>2级--{{item2.typeName}}</label>
+						<ul>
+							{{each item2.children item3 index3}}
+							<li>3---级{{item3.typeName}}</li>
+							{{/each}}
+						</ul>
+					</li>
+					{{/each}}
+				</ul>
+			</li>
+			{{/each}}
+		</ul>
+	</script>
+</body>
+</html>

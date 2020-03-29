@@ -1,0 +1,21 @@
+package dao;
+
+import entity.User;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+
+public interface UserMapper {
+    @Select("select * from t_user where id=#{id}" )
+    public User selectById(Integer id);
+
+    @Select("select * from t_user2 where user_id=#{id}")
+    @Results(value={
+            @Result(id=true,property ="id",column = "user_id"),
+            @Result(property ="username",column = "user_username"),
+            @Result(property ="password",column = "user_password"),
+            @Result(property ="phone",column = "user_phone"),
+            @Result(property ="address",column = "user_address")
+    })
+    public User selectById2(Integer id);
+}

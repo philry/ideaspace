@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <!-- 访问properties文件 -->
+    <properties resource="dataSource.properties"></properties>
+
+
+    <!--
+        typeAliases标签:配置别名
+        typeAlias标签:为某一个类配置别名
+            type:哪个类
+            alias:别名叫啥
+        package标签:自动为某个包下的所有的类设置别名
+            name:哪一个包
+            设置完成之后，该包下的所有类的别名均为当前的类名
+            大小写不敏感,推荐首字母大写
+    -->
+    <typeAliases>
+        <!--<typeAlias type="entity.User" alias="User"></typeAlias>-->
+        <package name="entity"></package>
+    </typeAliases>
+
+    <!--
+        environments:为当前的工程配置其所使用的所有的环境
+        可以配置无数个环境
+        default属性:指定当前正在使用的环境是哪一个
+            其值所对应的数据为某一个环境的id属性所对应的值
+    -->
+    <environments default="ds">
+        <!--
+            environment:配置其中一个环境
+            id:当前环境的唯一性标识符
+        -->
+        <environment id="mybatis">
+            <!--
+                transactionManager:配置事务管理器
+                type:指定当前的事务管理器的类型，其值有两种
+                    jdbc:使用简单的jdbc事务，开启、提交、回滚
+                        相当做初始做了如下操作
+                        conn.setAutoCommint(false)
+                    managed:该配置表示我啥也不做
+                        我从不关心事务
+                        将事务交给其他框架来处理，例如:spring
+            -->
+            <transactionManager type="jdbc"></transactionManager>
+            <!--
+                dataSource:配置数据源
+                type:当前数据源的类型，其值有三种
+                    UNPOOLED:简单配置,相当于DriverManager.getConnection(url,username,password)
+                    POOLED:使用数据源连接池
+                    JNDI:向其他容器要连接
+            -->
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis?useUnicode=true&amp;characterEncoding=utf8"></property>
+                <property name="username" value="root"></property>
+                <property name="password" value=""></property>
+            </dataSource>
+        </environment>
+
+        <environment id="ds">
+            <transactionManager type="jdbc"></transactionManager>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="${jdbc.driver}"></property>
+                <property name="url" value="${jdbc.url}"></property>
+                <property name="username" value="${jdbc.username}"></property>
+                <property name="password" value="${jdbc.password}"></property>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!-- 注册mapper文件-->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"></mapper>
+    </mappers>
+    
+</configuration>

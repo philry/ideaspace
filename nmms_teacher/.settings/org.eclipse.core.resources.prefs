@@ -1,0 +1,11 @@
+#Thu Nov 08 00:58:08 GMT+08:00 2018
+eclipse.preferences.version=1
+encoding//src/com/itany/nmms/action/ProductAction.java=UTF-8
+encoding//src/com/itany/nmms/action/StaffAction.java=UTF-8
+encoding//src/com/itany/nmms/factory=UTF-8
+encoding//src/com/itany/nmms/factory/ObjectFactory.java=UTF-8
+encoding//src/com/itany/nmms/service=UTF-8
+encoding//src/com/itany/nmms/service/impl/DeptServiceImpl.java=UTF-8
+encoding//src/com/itany/nmms/service/impl/ProductTypeServiceImpl.java=UTF-8
+encoding//src/com/itany/nmms/service/impl/StaffServiceImpl.java=UTF-8
+encoding//src/com/itany/nmms/util/MyBatisUtil.java=UTF-8

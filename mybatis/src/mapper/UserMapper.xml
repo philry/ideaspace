@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace:当前mapper文件的唯一性标识符
+        其值可以随便/必须是固定的某一个值
+        其值不可以重复
+        当直接使用mapper文件时，其值可以随便写
+        当使用三层结构，将其作为dao层某个接口的实现类的时候，不能随便写
+        此时其值为当前接口的路径名.类名
+-->
+<mapper namespace="dao.UserDao">
+
+
+    <!--
+        resultMap:配置手动映射
+        id:当前resultMap标签的唯一性标识符，用于他人引用
+        type:映射的java对象是谁
+    -->
+    <resultMap id="userMapper" type="User">
+        <!--
+            id:配置主键
+            result:配置普通字段
+        -->
+        <id property="id" column="user_id"></id>
+        <result property="username" column="user_username"></result>
+        <result property="password" column="user_password"></result>
+        <result property="phone" column="user_phone"></result>
+        <result property="address" column="user_address"></result>
+    </resultMap>
+
+    <!--
+     sql标签:在开发中，某些sql语句会多次重复的出现
+        我们为了代码的复用性
+        增加了sql标签
+        在sql标签体中，可以预先编写某些sql
+        在后面使用的时候，通过该sql标签的id属性进行调用
+    -->
+    <sql id="userColumn">
+        id,
+        username,
+        password,
+        phone,
+        address
+    </sql>
+
+
+    <!--
+       在mapper操作中，CURD操作的标签名对应的是数据库CURD操作的关键字
+       insert/delete/update/select标签:对应数据库相关操作
+    -->
+    <!--
+        insert标签:执行添加操作
+        id:表示当前操作的唯一性标识符，可以理解为方法名
+        如果当前xml指向了某一个dao层的接口
+        则此处id的值必须与dao层接口方法名完全一致
+        parameterType:方法的参数类型
+        标签体中编写sql语句
+    -->
+    <insert id="insertUser" parameterType="entity.User">
+      insert into
+      t_user
+        (username,password,phone,address)
+      values
+        (#{username},#{password},#{phone},#{address})
+    </insert>
+
+    <!--
+        resultType:表示返回值的类型
+    -->
+    <select id="selectById" parameterType="int" resultType="entity.User">
+        select id,username,password,phone,address
+        from t_user
+        where id = #{id}
+    </select>
+
+
+    <select id="selectAll" resultType="entity.User">
+        <!--
+           included标签:引用已经存在的某个sql标签块
+            refid属性:指向某个已经存在的sql标签块的id属性的值
+            标签引用对应的sql标签块
+         -->
+        select <include refid="userColumn"></include>
+        from t_user
+    </select>
+
+
+    <select id="selectByUsernameAndPassword" parameterType="entity.UserParameter" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user
+        where username = #{username}
+        and password = #{password}
+    </select>
+
+    <select id="selectByUsernameAndPassword2" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user
+        where username = #{aa}
+        and password = #{password}
+    </select>
+
+
+    <select id="selectByUsernameAndPassword3" resultType="entity.User">
+        select <include refid="userColumn"></include>
+        from t_user
+        where username = #{0}
+        and password = #{1}
+    </select>
+
+    <!-- 取别名实现自动映射 -->
+    <select id="selectById2" parameterType="integer" resultType="entity.User">
+        select user_id 'id',user_username 'username',user_password 'password',
+                user_phone 'phone',user_address 'address'
+        from t_user2
+        where user_id = #{id}
+    </select>
+
+
+    <!--
+        手动映射
+        resultMap:手动进行映射，指向某一个resultMap标签
+     -->
+    <select id="selectById3" parameterType="integer" resultMap="userMapper">
+        select user_id,user_username,user_password,
+                user_phone,user_address
+        from t_user2
+        where user_id = #{id}
+    </select>
+
+
+    <select id="selectByUsername" parameterType="string" resultType="User">
+        select <include refid="userColumn"></include>
+        from t_user
+        where username like #{username} escape '/'
+    </select>
+
+    <select id="selectByUsername2" parameterType="string" resultType="User">
+        select <include refid="userColumn"></include>
+        from t_user
+        <!--
+            bind标签:对方法的参数做额外的处理
+            name:哪一个参数，如果参数是对象，则name属性指向的是对象中的某一个属性
+            value:做什么样的额外处理
+                其中_paraneter表示当前传递到方法中的具体的参数值
+        -->
+        <bind name="username" value="'%'+_parameter+'%'"></bind>
+        where username like #{username} escape '/'
+    </select>
+
+    <!-- 动态sql之if -->
+    <select id="selectByParams1" parameterType="User" resultType="User">
+        select <include refid="userColumn"></include>
+        from t_user
+        where 1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="username != null and username != ''">
+            and username = #{username}
+        </if>
+        <if test="password != null and password != ''">
+            and password = #{password}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone = #{phone}
+        </if>
+        <if test="address != null and address != ''">
+            and address = #{address}
+        </if>
+    </select>
+
+
+    <!-- 动态sql之choose -->
+    <select id="selectByParams2" parameterType="User" resultType="User">
+        select <include refid="userColumn"></include>
+        from t_user
+        where
+        <choose>
+            <when test="id != null and id != ''">
+                id = #{id}
+            </when>
+            <when test="username != null and username != ''">
+                username = #{username}
+            </when>
+            <when test="password != null and password != ''">
+                password = #{password}
+            </when>
+            <when test="phone != null and phone != ''">
+                phone = #{phone}
+            </when>
+            <otherwise>
+                address = #{address}
+            </otherwise>
+
+        </choose>
+    </select>
+
+
+    <!-- 动态sql之where -->
+    <select id="selectByParams3" parameterType="User" resultType="User">
+        select <include refid="userColumn"></include>
+        from t_user
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+        </where>
+    </select>
+
+    <!-- 动态sql之set -->
+    <update id="updateUser" parameterType="User">
+        update t_user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!-- 动态sql之trim -->
+    <select id="selectByParams4" parameterType="User" resultType="User">
+        select <include refid="userColumn"></include>
+        from t_user
+         <trim prefix="where" prefixOverrides="and|or"> --忽略trim标签里内容首部的and或or
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                or username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectByIds" resultType="User">
+        select <include refid="userColumn"></include>
+        from t_user
+        where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="insertReturnPrimaryKey" parameterType="User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into
+        t_user
+          (username,password,phone,address)
+        values
+          (#{username},#{password},#{phone},#{address})
+    </insert>
+
+</mapper>

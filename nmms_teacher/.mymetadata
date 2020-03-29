@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="nmms_teacher"
+  id="myeclipse.1524808328919"
+  context-root="/nmms"
+  j2ee-spec="5.0"
+  archive="nmms_teacher.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

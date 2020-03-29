@@ -1,0 +1,1 @@
+INSERT INTO `t_praise` VALUES (1, 3, 1, '2018-11-11 16:28:57');

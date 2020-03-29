@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itany.netClass.dao.CourseMapper">
+    <resultMap id="courseMapper" type="Course">
+        <id property="id" column="c.id"></id>
+        <result property="courseName" column="course_name"></result>
+        <result property="courseInfo" column="course_info"></result>
+        <result property="author" column="author"></result>
+        <result property="coverImageUrl" column="cover_image_url"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="clickNumber" column="click_number"></result>
+        <result property="status" column="c.status"></result>
+        <result property="recommendationGrade" column="recommendation_grade"></result>
+        <association property="courseType" column="course_type_id"
+         javaType="CourseType">
+            <id property="id" column="t.id"></id>
+            <result property="typeName" column="t.type_name"></result>
+            <result property="status" column="t.status"></result>
+            <association property="parentType" column="parent_id"
+         javaType="CourseType">
+                <id property="id" column="pt.id"></id>
+                <result property="typeName" column="pt.type_name"></result>
+                <result property="status" column="pt.status"></result>
+            </association>
+        </association>
+    </resultMap>
+
+
+    <select id="selectCoursesOfTopThree" resultMap="courseMapper">
+      select
+      c.id 'c.id',c.course_name,c.course_info,c.author,c.cover_image_url,
+      c.create_date,c.click_number,c.status 'c.status',c.recommendation_grade,
+      c.course_type_id,t.id 't.id',t.type_name 't.type_name',t.parent_id,t.status 't.status',
+      pt.id 'pt.id',pt.type_name 'pt.type_name',pt.status 'pt.status'
+      from t_course c
+      join t_course_type t on c.course_type_id = t.id
+      join t_course_type pt on pt.id = t.parent_id
+      where c.status = 0 and t.status = 0 and pt.status = 0
+      order by c.click_number desc limit 0,3
+    </select>
+
+    <resultMap id="courseMapper2" type="Course">
+        <id property="id" column="c.id"></id>
+        <result property="courseName" column="course_name"></result>
+        <result property="courseInfo" column="course_info"></result>
+        <result property="author" column="author"></result>
+        <result property="coverImageUrl" column="cover_image_url"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="clickNumber" column="click_number"></result>
+        <result property="status" column="c.status"></result>
+        <association property="courseType" column="course_type_id"
+                     javaType="CourseType">
+        <id property="id" column="t.id"></id>
+        <result property="typeName" column="type_name"></result>
+        <result property="status" column="t.status"></result>
+        </association>
+    </resultMap>
+    <select id="selectByParams" parameterType="Course" resultMap="courseMapper2">
+        select
+        c.id 'c.id',c.course_name,c.course_info,c.author,c.cover_image_url,
+        c.create_date,c.click_number,c.status 'c.status',c.recommendation_grade,
+        c.course_type_id,t.id 't.id',t.type_name,t.status 't.status'
+        from t_course c
+        join t_course_type t on c.course_type_id = t.id
+        <where>
+            <if test="id!=null">
+                and c.id=#{id}
+            </if>
+            <if test="author != null and author != ''">
+                and c.author=#{author}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and c.course_name=#{courseName}
+            </if>
+            <if test="status != null ">
+                and c.status=#{status}
+            </if>
+            <if test="courseType != null ">
+                and c.course_type_id=#{courseType.id}
+            </if>
+            <if test="startDate !=null ">
+                and c.create_date &gt; #{startDate}
+            </if>
+            <if test="endDate != null">
+                and c.create_date &lt; #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <update id="modifyStatus">
+        update t_course set
+        status = #{1} where
+        id = #{0}
+    </update>
+
+    <insert id="addCourse" parameterType="Course" >
+        insert into t_course
+        (course_name,course_info,author,cover_image_url,create_date,
+        click_number,status,course_type_id) values
+        (#{courseName},#{courseInfo},#{author},#{coverImageUrl},
+        #{createDate},#{clickNumber},#{status},#{courseType.id})
+    </insert>
+
+    <update id="modifyCourse" parameterType="Course">
+        update t_course
+        <set>
+            <if test="courseName!=null and courseName != ''">
+                course_name=#{courseName},
+            </if>
+            <if test="courseInfo!=null and courseInfo != ''">
+                course_info=#{courseInfo},
+            </if>
+            <if test="author!=null and author != ''">
+                author=#{author},
+            </if>
+            <if test="coverImageUrl!=null and coverImageUrl != ''">
+                cover_image_url=#{coverImageUrl},
+            </if>
+            <if test="courseType!=null ">
+                course_type_id=#{courseType.id},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
